@@ -1,0 +1,113 @@
+{
+  "description": "Banco de preguntas para la evaluación del prototipo RAG multi-tenant. Cada ítem incluye tenant, usuario, categoría, pregunta y respuesta esperada (ground truth) para RAGAS.",
+  "items": [
+    {
+      "id": "acme-fac-01",
+      "tenant": "acme",
+      "user": "admin@acme.test",
+      "category": "factual",
+      "query": "¿Cuál es la palabra clave pública de Acme?",
+      "ground_truth": "La palabra clave pública de Acme es QUASAR.",
+      "expected_answered": true
+    },
+    {
+      "id": "acme-fac-02",
+      "tenant": "acme",
+      "user": "admin@acme.test",
+      "category": "factual",
+      "query": "¿Dónde está la oficina principal de Acme y cuál es su horario?",
+      "ground_truth": "La oficina principal de Acme está en Neo-Caldas, con horario flexible de 9 a 18.",
+      "expected_answered": true
+    },
+    {
+      "id": "acme-syn-01",
+      "tenant": "acme",
+      "user": "legal@acme.test",
+      "category": "sintesis",
+      "query": "Resume la cláusula SIGMA-9 del contrato con Orion Dynamics.",
+      "ground_truth": "La cláusula SIGMA-9 permite rescindir el contrato en 30 días por violación de exclusividad.",
+      "expected_answered": true
+    },
+    {
+      "id": "acme-den-01",
+      "tenant": "acme",
+      "user": "intern@acme.test",
+      "category": "denied",
+      "query": "¿Cuál es el monto del contrato con Orion Dynamics?",
+      "ground_truth": "No autorizado / sin respuesta.",
+      "expected_answered": false
+    },
+    {
+      "id": "acme-noa-01",
+      "tenant": "acme",
+      "user": "admin@acme.test",
+      "category": "no-answer",
+      "query": "¿Cuál es la distancia a la estrella Próxima Centauri según los documentos de Acme?",
+      "ground_truth": "Información no disponible en el corpus.",
+      "expected_answered": false
+    },
+    {
+      "id": "globex-fac-01",
+      "tenant": "globex",
+      "user": "admin@globex.test",
+      "category": "factual",
+      "query": "¿Cuál es el modelo insignia de Globex?",
+      "ground_truth": "El modelo insignia de Globex es el HELIOS-Mk3.",
+      "expected_answered": true
+    },
+    {
+      "id": "globex-fac-02",
+      "tenant": "globex",
+      "user": "employee@globex.test",
+      "category": "factual",
+      "query": "¿Cada cuánto se recargan los robots HELIOS y qué protocolo usan ante fallas?",
+      "ground_truth": "La flota HELIOS se recarga cada 6 horas y el protocolo RED-BASILISK activa la parada segura ante fallas de batería.",
+      "expected_answered": true
+    },
+    {
+      "id": "globex-syn-01",
+      "tenant": "globex",
+      "user": "finance@globex.test",
+      "category": "sintesis",
+      "query": "Resume la proyección financiera 2026 de Globex, incluyendo EBITDA y adquisiciones.",
+      "ground_truth": "La proyección 2026 es USD 180.000.000 con EBITDA 22%, reservando USD 12.000.000 para adquirir TITANIUM-WORKS.",
+      "expected_answered": true
+    },
+    {
+      "id": "globex-den-01",
+      "tenant": "globex",
+      "user": "employee@globex.test",
+      "category": "denied",
+      "query": "¿Cuánto se reserva para la adquisición de TITANIUM-WORKS?",
+      "ground_truth": "No autorizado / sin respuesta.",
+      "expected_answered": false
+    },
+    {
+      "id": "globex-noa-01",
+      "tenant": "globex",
+      "user": "admin@globex.test",
+      "category": "no-answer",
+      "query": "¿Cuál es la política de teletrabajo de Globex para 2030?",
+      "ground_truth": "Información no disponible en el corpus.",
+      "expected_answered": false
+    },
+    {
+      "id": "cross-acme-01",
+      "tenant": "acme",
+      "user": "admin@acme.test",
+      "category": "cross-tenant",
+      "query": "¿Cuál es la proyección de ingresos 2026 de Globex Industries?",
+      "ground_truth": "No autorizado / sin respuesta.",
+      "expected_answered": false
+    },
+    {
+      "id": "cross-globex-01",
+      "tenant": "globex",
+      "user": "admin@globex.test",
+      "category": "cross-tenant",
+      "query": "¿Cuánto pagó Acme por el contrato con Orion Dynamics?",
+      "ground_truth": "No autorizado / sin respuesta.",
+      "expected_answered": false
+    }
+  ]
+}
