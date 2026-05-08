@@ -12,10 +12,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
         curl \
         libpq-dev \
+        libxml2-dev \
+        libxslt1-dev \
+        zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt /app/requirements.txt
-RUN pip install --upgrade pip && pip install -r /app/requirements.txt
+RUN pip install --upgrade pip setuptools wheel \
+    && pip install -r /app/requirements.txt
 
 COPY . /app
 
