@@ -18,7 +18,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt /app/requirements.txt
+# Install CPU-only PyTorch first to avoid multi-GB CUDA/nvidia_* wheels on servers without GPU.
 RUN pip install --upgrade pip setuptools wheel \
+    && pip install --index-url https://download.pytorch.org/whl/cpu \
+        "torch>=2.2.0,<2.5" \
     && pip install -r /app/requirements.txt
 
 COPY . /app
