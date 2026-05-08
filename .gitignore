@@ -10,7 +10,10 @@ dist/
 downloads/
 eggs/
 .eggs/
+# Ignorar carpetas lib (p. ej. venv); no afectar frontend/lib del cliente Next.js
 lib/
+!frontend/lib/
+!frontend/lib/**
 lib64/
 parts/
 sdist/
