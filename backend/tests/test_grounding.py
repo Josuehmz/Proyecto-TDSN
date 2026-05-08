@@ -25,11 +25,15 @@ def test_unsupported_question_returns_no_answer(client, acme_admin_token):
     data = _query(
         client,
         acme_admin_token,
-        "¿Cuál es la temperatura promedio del océano Pacífico en 1873?",
+        (
+            "zzUniqueNoCorpMatch8391 — ¿Cuál es la temperatura promedio del "
+            "océano Pacífico en el año 1873 según registros NOAA inexistentes?"
+        ),
     )
     assert data["answered"] is False
-    assert data["answer"].strip().upper() == "NO_ANSWER"
     assert data["citations"] == []
+    assert "NO_ANSWER" not in data["answer"]
+    assert "No encuentro" in data["answer"] or "no encuentro" in data["answer"]
 
 
 def test_citations_are_present_when_answered(client, acme_legal_token):

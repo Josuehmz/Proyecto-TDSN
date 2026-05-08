@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import time
 import uuid
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,6 +11,7 @@ from fastapi.responses import JSONResponse
 from app.api import auth, documents, health, query
 from app.config import get_settings
 from app.logging_config import bind_request_context, configure_logging, get_logger
+from app.rag import generator as rag_generator
 
 configure_logging()
 logger = get_logger(__name__)
@@ -17,6 +19,17 @@ logger = get_logger(__name__)
 
 def create_app() -> FastAPI:
     settings = get_settings()
+
+    @asynccontextmanager
+    async def lifespan(_app: FastAPI):
+        cfg = get_settings()
+        cli = rag_generator.get_llm_client()
+        logger.info(
+            "app.llm_startup",
+            llm_provider=cfg.llm_provider,
+            llm_impl=type(cli).__name__,
+        )
+        yield
 
     app = FastAPI(
         title="Plataforma RAG Multi-Tenant",
@@ -26,6 +39,7 @@ def create_app() -> FastAPI:
             "(V3) grounding con citas."
         ),
         version="0.1.0",
+        lifespan=lifespan,
     )
 
     app.add_middleware(

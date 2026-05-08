@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Principal, QueryResponse, sendQuery } from "@/lib/api";
+import { Principal, QueryResponse, UnauthorizedError, sendQuery } from "@/lib/api";
 
 type Message =
   | { role: "user"; content: string }
@@ -50,7 +50,25 @@ export default function ChatPage() {
     try {
       const response = await sendQuery(token, userMsg.content);
       setMessages((m) => [...m, { role: "assistant", content: response }]);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      if (err instanceof UnauthorizedError) {
+        sessionStorage.setItem(
+          "rag_notice",
+          err.message || "Sesión expirada. Inicia sesión de nuevo.",
+        );
+        sessionStorage.removeItem("rag_token");
+        sessionStorage.removeItem("rag_principal");
+        router.replace("/");
+        return;
+      }
+      const msg =
+        err instanceof Error &&
+        (err.message === "Failed to fetch" ||
+          err.message.includes("NetworkError"))
+          ? `${err.message} — suele pasar cuando el backend no responde o se reinicia (p. ej. error de configuración). Comprueba http://127.0.0.1:8000/healthz y docker compose logs backend.`
+          : err instanceof Error
+            ? err.message
+            : String(err);
       setMessages((m) => [
         ...m,
         {
@@ -58,7 +76,7 @@ export default function ChatPage() {
           content: {
             request_id: "error",
             answered: false,
-            answer: `Error: ${err.message}`,
+            answer: `Error: ${msg}`,
             citations: [],
             policy_reasons: [],
             retrieved: 0,
@@ -100,8 +118,9 @@ export default function ChatPage() {
         {messages.length === 0 && (
           <p className="text-sm text-slate-400">
             Prueba con: <em>“¿Cuál es la palabra clave pública de la
-            organización?”</em> o con una pregunta intencionalmente fuera de
-            alcance para validar el modo <code>NO_ANSWER</code>.
+            organización?”</em>, con un admin <em>“¿Qué documentos tienes?”</em>{" "}
+            para ver el inventario autorizado, o saludos y preguntas de identidad;
+            las negaciones muestran un mensaje claro cuando no hay acceso.
           </p>
         )}
         {messages.map((m, i) =>
@@ -144,14 +163,37 @@ function UserBubble({ text }: { text: string }) {
 }
 
 function AssistantBubble({ data }: { data: QueryResponse }) {
-  const badge = data.answered
-    ? "bg-green-100 text-green-700"
-    : "bg-yellow-100 text-yellow-800";
+  const inv =
+    data.policy_reasons.includes("document_catalog") ||
+    data.policy_reasons.includes("admin_document_catalog");
+  const tier = inv
+    ? "catalog"
+    : data.citations.length > 0
+      ? "doc"
+      : data.answered
+        ? "chat"
+        : "none";
+  const badgeClasses =
+    tier === "doc"
+      ? "bg-green-100 text-green-700"
+      : tier === "catalog"
+        ? "bg-violet-100 text-violet-800"
+        : tier === "chat"
+          ? "bg-sky-100 text-sky-800"
+          : "bg-amber-100 text-amber-900";
+  const badgeLabel =
+    tier === "doc"
+      ? "CON_BASE"
+      : tier === "catalog"
+        ? "INVENTARIO"
+        : tier === "chat"
+          ? "CONVERSACIÓN"
+          : "SIN_DOC";
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2 text-xs text-slate-500">
-        <span className={`rounded-full px-2 py-0.5 font-semibold ${badge}`}>
-          {data.answered ? "ANSWERED" : "NO_ANSWER"}
+        <span className={`rounded-full px-2 py-0.5 font-semibold ${badgeClasses}`}>
+          {badgeLabel}
         </span>
         <span>
           top={data.top_score.toFixed(3)} · {data.retrieved} recuperados ·{" "}

@@ -2,15 +2,23 @@ from __future__ import annotations
 
 import os
 
-import pytest
-from fastapi.testclient import TestClient
+# Fuerza valores de test antes de cargar Settings / modelos (Docker puede inyectar MOCK del .env).
+os.environ["LLM_PROVIDER"] = "groq"
+os.environ["GROQ_API_KEY"] = "pytest-stub-no-remote-calls"
+os.environ["RERANKER_ENABLED"] = "false"
+os.environ["NO_ANSWER_THRESHOLD"] = "0.1"
 
+from app.config import get_settings
 
-@pytest.fixture(scope="session", autouse=True)
-def _prepare_env() -> None:
-    os.environ.setdefault("LLM_PROVIDER", "mock")
-    os.environ.setdefault("RERANKER_ENABLED", "false")
-    os.environ.setdefault("NO_ANSWER_THRESHOLD", "0.1")
+get_settings.cache_clear()
+
+import app.rag.generator as rag_generator  # noqa: E402
+from tests.llm_stub import TEST_PIPELINE_LLM_STUB  # noqa: E402
+
+rag_generator.get_llm_client = lambda: TEST_PIPELINE_LLM_STUB
+
+import pytest  # noqa: E402
+from fastapi.testclient import TestClient  # noqa: E402
 
 
 @pytest.fixture(scope="session")

@@ -52,7 +52,7 @@ Réplica del diagrama de la *Figura 3* del artículo:
                   │             │             │
                   ▼             ▼             ▼
          pgvector (schema:   LLM API     Logs + Auditoría
-         tenant_<slug>)    (OpenAI/mock) (platform.audit_events)
+         tenant_<slug>)    (OpenAI/Groq) (platform.audit_events)
 ```
 
 Mapeo prototipo ↔ arquitectura cloud (Sección 4.2 del artículo):
@@ -63,7 +63,7 @@ Mapeo prototipo ↔ arquitectura cloud (Sección 4.2 del artículo):
 | ECS Fargate (`orchestrator`)               | Proceso Uvicorn                                 |
 | OpenSearch kNN *index-per-tenant*          | Postgres + pgvector con *schema-per-tenant*     |
 | DynamoDB (metadata)                        | Tablas SQL por tenant                           |
-| Bedrock / OpenAI                           | `LLM_PROVIDER=openai` o `mock` (determinista)   |
+| Bedrock / OpenAI / Groq                    | `LLM_PROVIDER=openai` o `groq` (+ API key)   |
 | KMS                                        | Cifrado en tránsito TLS + contraseñas bcrypt    |
 | CloudWatch + X-Ray                         | `structlog` JSON + `audit_events`               |
 | S3 + SQS + Workers ECS (ingesta)           | Pipeline síncrono `ingest_document()`           |
@@ -113,7 +113,7 @@ Mapeo prototipo ↔ arquitectura cloud (Sección 4.2 del artículo):
 
 - Docker Desktop (Windows/macOS) o Docker Engine + Compose v2.
 - *(Opcional)* Python 3.11 y Node 20 si se quiere correr fuera de contenedor.
-- *(Opcional)* `OPENAI_API_KEY` para activar RAGAS y/o LLM real.
+- *(Opcional)* `OPENAI_API_KEY` o `GROQ_API_KEY` (+ `LLM_PROVIDER`) para LLM real; RAGAS puede seguir usando OpenAI.
 
 ## 5. Puesta en marcha
 
@@ -134,7 +134,7 @@ La primera vez que arranca el backend ejecuta:
 2. Creación de tablas globales.
 3. **Seed idempotente** de dos tenants de demo (`acme` y `globex`) con sus
    usuarios, documentos y ACLs.
-4. Arranque de Uvicorn.
+4. Arranque de Uvicorn (en `docker-compose` **no** se usa `--reload`: al montar `./backend`, guardar cambios desde el IDE podía disparar recargas, cortar TCP y en el navegador ver `Failed to fetch` / `ERR_EMPTY_RESPONSE`).
 
 ### Usuarios de demo
 
@@ -222,7 +222,7 @@ Métricas reportadas (detalle en `evaluation/README.md`):
 - **Seguridad**: tasa de bloqueo cross-tenant (meta 100 %), tasa de deny
   correcto por ABAC (meta 100 %).
 - **Desempeño**: P50, P95, throughput y tasa de `no-answer` correcto.
-- **Costo** (proxy): tokens consumidos por request cuando `LLM_PROVIDER=openai`.
+- **Costo** (proxy): tokens por request con `LLM_PROVIDER=openai`; con Groq, según su plan/cuotas.
 
 Los resultados se persisten en `evaluation/results/*.json` para adjuntarlos
 a la sección *Resultados* del artículo.
@@ -246,7 +246,10 @@ Incluye las pruebas exigidas por la Tabla 6 del artículo:
 
 | Variable                   | Por defecto                                           | Para qué sirve                                         |
 | -------------------------- | ----------------------------------------------------- | ------------------------------------------------------ |
-| `LLM_PROVIDER`             | `mock`                                                | Determinista para CI; cambia a `openai` para RAGAS     |
+| `LLM_PROVIDER`             | `groq`                                                 | `groq` u `openai` (Groq usa API tipo OpenAI)           |
+| `GROQ_API_KEY`             | —                                                     | Requerido si `LLM_PROVIDER=groq`                      |
+| `GROQ_MODEL`               | `llama-3.3-70b-versatile`                             | Id. del modelo en Groq Console                        |
+| `GROQ_BASE_URL`            | `https://api.groq.com/openai/v1`                      | Base URL compat. OpenAI                               |
 | `OPENAI_API_KEY`           | —                                                     | Requerido si `LLM_PROVIDER=openai` o para RAGAS        |
 | `EMBEDDINGS_PROVIDER`      | `sentence-transformers`                               | `all-MiniLM-L6-v2` local sin costo                     |
 | `CHUNK_SIZE_TOKENS`        | 384                                                   | Decisión 3 del artículo                                |

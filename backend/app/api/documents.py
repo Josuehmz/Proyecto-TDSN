@@ -11,7 +11,7 @@ from app.audit.logger import audit
 from app.db.models import Chunk, Document
 from app.deps import Principal, get_principal, get_request_id, get_tenant_db
 from app.ingest.pipeline import ingest_document
-from app.policy.engine import ClearanceLevel
+from app.policy.engine import document_accessible_predicate
 
 router = APIRouter(prefix="/documents", tags=["documents"])
 
@@ -29,13 +29,10 @@ def list_documents(
     db: Annotated[Session, Depends(get_tenant_db)],
     principal: Annotated[Principal, Depends(get_principal)],
 ) -> DocumentListOut:
-    max_level = ClearanceLevel.from_str(principal.clearance)
-    allowed = {lvl.name for lvl in ClearanceLevel if lvl <= max_level}
-
     stmt = (
         select(Document, func.count(Chunk.id).label("chunk_count"))
         .join(Chunk, Chunk.document_id == Document.id, isouter=True)
-        .where(Document.required_clearance.in_(allowed))
+        .where(document_accessible_predicate(principal))
         .group_by(Document.id)
         .order_by(Document.created_at.desc())
     )

@@ -50,7 +50,7 @@ def session_scope(tenant_slug: str | None = None) -> Iterator[Session]:
     try:
         if tenant_slug is not None:
             schema = tenant_schema(tenant_slug)
-            session.execute(text(f'SET LOCAL search_path TO "{schema}", platform'))
+            session.execute(text(f'SET LOCAL search_path TO "{schema}", platform, public'))
         else:
             session.execute(text("SET LOCAL search_path TO platform"))
         yield session

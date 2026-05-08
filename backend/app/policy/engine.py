@@ -5,7 +5,7 @@ from enum import IntEnum
 
 from sqlalchemy import ColumnElement, and_, or_
 
-from app.db.models import Chunk
+from app.db.models import Chunk, Document
 from app.deps import Principal
 
 
@@ -60,3 +60,18 @@ def obligations_to_sqlalchemy(obligations: list[ColumnElement]) -> ColumnElement
         # Deny-by-default defensivo.
         return Chunk.id.is_(None)
     return and_(*obligations)
+
+
+def document_accessible_predicate(principal: Principal) -> ColumnElement:
+    """Mismas reglas que los fragmentos en retrieval: clearance + roles + departamentos."""
+
+    user_clearance = ClearanceLevel.from_str(principal.clearance)
+    allowed_clearance = [lvl.name for lvl in ClearanceLevel if lvl <= user_clearance]
+    return and_(
+        Document.required_clearance.in_(allowed_clearance),
+        or_(Document.allowed_roles == [], Document.allowed_roles.overlap(principal.roles)),
+        or_(
+            Document.allowed_departments == [],
+            Document.allowed_departments.overlap(principal.departments),
+        ),
+    )

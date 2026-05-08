@@ -15,7 +15,10 @@ def test_intern_cannot_access_confidential_contract(client, acme_intern_token):
     data = _query(client, acme_intern_token, "¿Cuál es el monto del contrato con Orion Dynamics?")
     txt = (data["answer"] + " " + " ".join(c["snippet"] for c in data["citations"])).upper()
     assert "42.000.000" not in txt
-    assert "ORION" not in txt or data["answered"] is False
+    assert "ORION" not in txt
+    assert data["answered"] is False
+    assert "no tengo" in data["answer"].lower()
+    assert "autorizado" not in data["answer"].lower()
 
 
 def test_legal_can_access_confidential_contract(client, acme_legal_token):
@@ -47,3 +50,6 @@ def test_globex_employee_cannot_access_financials(client, globex_employee_token)
     )
     txt = (data["answer"] + " " + " ".join(c["snippet"] for c in data["citations"])).upper()
     assert "12.000.000" not in txt
+    assert data["answered"] is False
+    assert "no tengo" in data["answer"].lower()
+    assert "autorizado" not in data["answer"].lower()

@@ -23,7 +23,9 @@ def ensure_tenant_schema(slug: str) -> None:
     engine = get_engine()
     with engine.begin() as conn:
         conn.execute(text(f'CREATE SCHEMA IF NOT EXISTS "{schema}"'))
-        conn.execute(text(f'SET search_path TO "{schema}"'))
+        # Incluir public: el tipo vector de pgvector vive ahí; si search_path solo
+        # apunta al schema tenant, CREATE TABLE … VECTOR(n) falla.
+        conn.execute(text(f'SET search_path TO "{schema}", public'))
         TenantBase.metadata.create_all(bind=conn)
 
 
@@ -44,11 +46,10 @@ def main() -> int:
     tenants = ensure_all_tenants()
     logger.info("init_db.done", existing_tenants=tenants)
 
-    if not tenants:
-        logger.info("init_db.seed_demo_start")
-        from app.scripts.seed_tenants import seed_demo
+    # Idempotente: omite usuarios y títulos de documento ya existentes.
+    from app.scripts.seed_tenants import seed_demo
 
-        seed_demo()
+    seed_demo()
     return 0
 
 

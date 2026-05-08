@@ -3,6 +3,7 @@ from __future__ import annotations
 from fastapi import APIRouter
 from sqlalchemy import text
 
+from app.config import get_settings
 from app.db.session import get_engine
 
 router = APIRouter(tags=["health"])
@@ -10,7 +11,11 @@ router = APIRouter(tags=["health"])
 
 @router.get("/healthz")
 def healthz() -> dict[str, str]:
-    return {"status": "ok"}
+    settings = get_settings()
+    return {
+        "status": "ok",
+        "llm_provider": settings.llm_provider,
+    }
 
 
 @router.get("/readyz")

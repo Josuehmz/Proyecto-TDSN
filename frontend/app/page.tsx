@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { login } from "@/lib/api";
 
@@ -11,6 +11,14 @@ export default function LoginPage() {
   const [password, setPassword] = useState("Acme_Admin_2026!");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const notice = sessionStorage.getItem("rag_notice");
+    if (notice) {
+      setError(notice);
+      sessionStorage.removeItem("rag_notice");
+    }
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

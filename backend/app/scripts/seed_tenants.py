@@ -85,6 +85,94 @@ TENANTS = [
                 "allowed_roles": ["legal"],
                 "allowed_departments": ["legal"],
             },
+            {
+                "title": "Política de teletrabajo y bienestar Acme",
+                "filename": "acme_teletrabajo.txt",
+                "content": (
+                    "Los equipos de Acme pueden trabajar remoto hasta tres días por semana "
+                    "con aprobación del líder. Las reuniones presenciales críticas tienen "
+                    "prioridad los martes. Se facilita asesoría psicológica anónima vía "
+                    "proveedor externo homologado. Contacto interno: people@acme.corp."
+                ),
+                "required_clearance": "public",
+                "allowed_roles": [],
+                "allowed_departments": [],
+            },
+            {
+                "title": "Calendario corporativo Acme 2026",
+                "filename": "acme_calendario_2026.txt",
+                "content": (
+                    "Cierre regional del 23 al 27 de diciembre 2026. Día de inventario "
+                    "general el 14 de noviembre (sin operaciones en planta Neo-Caldas). "
+                    "Asamblea anual de empleados en marzo; validar sede en intranet."
+                ),
+                "required_clearance": "public",
+                "allowed_roles": [],
+                "allowed_departments": [],
+            },
+            {
+                "title": "Guía de comunicación y marca Acme",
+                "filename": "acme_marca.txt",
+                "content": (
+                    "Usar siempre el logotipo aprobado en fondo claro u oscuro según manual "
+                    "v3.2. En redes sociales, tono profesional y verificación legal previa "
+                    "para cifras de mercado. Nunca atribuir partners sin contrato firmado."
+                ),
+                "required_clearance": "public",
+                "allowed_roles": [],
+                "allowed_departments": [],
+            },
+            {
+                "title": "Procedimiento de gestión de accesos lógicos Acme",
+                "filename": "acme_accesos_it.txt",
+                "content": (
+                    "Altas y bajas en IAM en un plazo máximo de 24 h hábiles. MFA "
+                    "obligatorio para VPN y consolas de despliegue. Revocación automática "
+                    "tras 90 días de inactividad en entornos no productivos. Auditoría "
+                    "trimestral conjunta IT-Control Interno."
+                ),
+                "required_clearance": "internal",
+                "allowed_roles": [],
+                "allowed_departments": [],
+            },
+            {
+                "title": "Estándar de respaldo y continuidad Acme",
+                "filename": "acme_backup_bc.txt",
+                "content": (
+                    "Backups incrementales diarios y full semanal; retención mínima 35 días "
+                    "en sitio y 180 días en nube cifrada. RTO objetivo 4 h para sistemas "
+                    "críticos; RPO 1 h. Simulacro anual documentado ante la dirección."
+                ),
+                "required_clearance": "internal",
+                "allowed_roles": [],
+                "allowed_departments": [],
+            },
+            {
+                "title": "Brief técnico propulsores clase K (uso interno)",
+                "filename": "acme_propulsores_k.txt",
+                "content": (
+                    "Los propulsores clase K usan aleación revisada en 2025-Q4. Presión de "
+                    "cámara nominal 9,2 MPa; ensayos destructivos solo en célula autorizada. "
+                    "Cualquier modificación de geometría de inyector requiere CAB de "
+                    "ingeniería y trazabilidad en JIRA-PROP."
+                ),
+                "required_clearance": "internal",
+                "allowed_roles": [],
+                "allowed_departments": [],
+            },
+            {
+                "title": "Política de retención de datos y RGPD Acme",
+                "filename": "acme_retencion_rgpd.txt",
+                "content": (
+                    "Datos de RR.HH. activos: conservación mientras dure la relación laboral "
+                    "más 5 años según normativa local. Incidencias de seguridad: logs 24 "
+                    "meses. Solicitudes de borrado: canal certificado sólo para personal "
+                    "legal y DPO designado; registro obligatorio en libro de tratamientos."
+                ),
+                "required_clearance": "confidential",
+                "allowed_roles": ["legal"],
+                "allowed_departments": ["legal"],
+            },
         ],
     },
     {
@@ -153,6 +241,94 @@ TENANTS = [
                     "USD 12.000.000 para adquisición de TITANIUM-WORKS. Este "
                     "documento es CONFIDENCIAL y solo puede consultarse por "
                     "el equipo financiero."
+                ),
+                "required_clearance": "confidential",
+                "allowed_roles": ["finance"],
+                "allowed_departments": ["finance"],
+            },
+            {
+                "title": "Beneficios y salud Globex 2026",
+                "filename": "globex_beneficios.txt",
+                "content": (
+                    "Programa dental y visual para familiares directos. Gimnasio con "
+                    "convenio en sede Nueva Austral y cuatro ciudades aliadas. Chequeo "
+                    "médico anual con perfil ampliado para personal de turnos nocturnos."
+                ),
+                "required_clearance": "public",
+                "allowed_roles": [],
+                "allowed_departments": [],
+            },
+            {
+                "title": "Sostenibilidad y reciclaje de baterías Globex",
+                "filename": "globex_sostenibilidad.txt",
+                "content": (
+                    "Meta 2027: 85% de baterías recuperadas de flota devueltas a refinería "
+                    "certificada. Prohibido vertido en vertedero municipal. Reporte TRIM "
+                    "de toneladas evitadas enviado a auditoría externa."
+                ),
+                "required_clearance": "public",
+                "allowed_roles": [],
+                "allowed_departments": [],
+            },
+            {
+                "title": "Interacción urbana segura con robots Globex",
+                "filename": "globex_urbana_publico.txt",
+                "content": (
+                    "Velocidad máxima en zonas peatonales 6 km/h. Distancia mínima 1,5 m "
+                    "respecto a niños y mascotas. En caso de aglomeración, el operador "
+                    "remoto puede asumir control en segundos; botón físico de parada en "
+                    "cada unidad."
+                ),
+                "required_clearance": "public",
+                "allowed_roles": [],
+                "allowed_departments": [],
+            },
+            {
+                "title": "Inspección pre-turno flota logística Globex",
+                "filename": "globex_inspeccion_turno.txt",
+                "content": (
+                    "Lista de 14 puntos: integridad de bumpers, firmware del día, test de "
+                    "frenado en seco y húmedo, estado LED de estado. Incidencia mayor: "
+                    "retirar unidad y abrir ticket en OPS-LINE. Turnos de 8 h con registro "
+                    "de firmas digitales."
+                ),
+                "required_clearance": "internal",
+                "allowed_roles": [],
+                "allowed_departments": [],
+            },
+            {
+                "title": "Manual de calidad planta ensamble Globex",
+                "filename": "globex_calidad_iso.txt",
+                "content": (
+                    "Auditorías internas ISO 9001 cada seis meses. Tolerancias de ensamble "
+                    "según hoja MH-441; rechazo automático si desviación > 0,12 mm en "
+                    "articulación principal. Herramientas de torque calibradas trimestralmente."
+                ),
+                "required_clearance": "internal",
+                "allowed_roles": [],
+                "allowed_departments": [],
+            },
+            {
+                "title": "Plan de comunicación de crisis Globex",
+                "filename": "globex_crisis_comms.txt",
+                "content": (
+                    "Comité de crisis: dirección, legal, operaciones y PRL. Respuesta "
+                    "inicial pública en menos de 45 min. No confirmar cifras de víctimas "
+                    "hasta validación de autoridades. Sala de guerra virtual permanente "
+                    "en horario de incidente Nivel 2 o superior."
+                ),
+                "required_clearance": "internal",
+                "allowed_roles": [],
+                "allowed_departments": [],
+            },
+            {
+                "title": "Memorando borrador — adquisición logística LATAM",
+                "filename": "globex_memo_latam.txt",
+                "content": (
+                    "Evaluación preliminar de tres carriers regionales para consolidar "
+                    "última milla en Chile y Perú. Capex estimado inicial USD 4,5 M; "
+                    "payback proyectado 31 meses. Sujeto a due diligence y aprobación "
+                    "del comité de inversiones. Distribución restringida a Finanzas."
                 ),
                 "required_clearance": "confidential",
                 "allowed_roles": ["finance"],

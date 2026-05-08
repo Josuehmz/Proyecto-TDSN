@@ -14,6 +14,17 @@ from app.rag.embeddings import get_embeddings_model
 logger = get_logger(__name__)
 
 
+def embedding_input_text(document_title: str, chunk_text: str) -> str:
+    """Texto que se vectoriza: incluye el título para que la ANN encuentre el documento
+    aunque la pregunta no cite el nombre literal (solo el tema o sinónimos)."""
+
+    title = (document_title or "").strip()
+    body = (chunk_text or "").strip()
+    if not title:
+        return body
+    return f"Título del documento: {title}\n\n{body}"
+
+
 @dataclass(frozen=True)
 class IngestedDocument:
     document_id: UUID
@@ -76,7 +87,7 @@ def ingest_document(
     db.add(doc)
     db.flush()
 
-    vectors = get_embeddings_model().embed([c.text for c in chunks])
+    vectors = get_embeddings_model().embed([embedding_input_text(title, c.text) for c in chunks])
 
     for c, vec in zip(chunks, vectors, strict=True):
         db.add(
