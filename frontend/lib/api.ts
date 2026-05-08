@@ -1,6 +1,16 @@
-const API_BASE =
-  (typeof process !== "undefined" && process.env.NEXT_PUBLIC_API_URL) ||
-  "http://localhost:8000";
+/**
+ * Si NEXT_PUBLIC_API_URL está definida, el navegador llama directo al backend
+ * (requiere CORS). Si no, se usan rutas relativas (p. ej. /auth/login) y Next.js
+ * hace proxy vía `rewrites` hacia BACKEND_INTERNAL_URL (recomendado en Docker).
+ */
+function getApiBase(): string {
+  const raw =
+    typeof process !== "undefined"
+      ? process.env.NEXT_PUBLIC_API_URL?.trim()
+      : undefined;
+  if (raw) return raw.replace(/\/$/, "");
+  return "";
+}
 
 export type Principal = {
   user_id: string;
@@ -48,8 +58,9 @@ export class UnauthorizedError extends Error {
 }
 
 function joinUrl(path: string): string {
-  const base = API_BASE.replace(/\/$/, "");
+  const base = getApiBase();
   const p = path.startsWith("/") ? path : `/${path}`;
+  if (!base) return p;
   return `${base}${p}`;
 }
 

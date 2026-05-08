@@ -54,7 +54,10 @@ services:
     container_name: rag-frontend
     restart: unless-stopped
     environment:
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+      # URL que solo ve el servidor Next (red Docker / servicio backend)
+      BACKEND_INTERNAL_URL: ${BACKEND_INTERNAL_URL:-http://backend:8000}
+      # Opcional: URL pública del API; si se define, el cliente no usa el proxy
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
     depends_on:
       - backend
     ports:
